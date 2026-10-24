@@ -1,19 +1,23 @@
 # BULT / Findings + recommendations
 
-A static, screenshot-led report prepared by Vessel Archive for Alex Bult, based on the supplied 24 October 2026 evidence pack.
+A public, screenshot-led strategy webpage by Vessel Archive for Alex Bult. Evidence and research checked 24 October 2026.
 
-## Hosting
+## Hosting and scope
 
-Publish this directory at the root of a GitHub Pages branch. All asset links are relative and support the `/bult-findings/` subpath. No build step, external dependencies, analytics, account, form submission, or backend is required.
+Static GitHub Pages site with relative paths. No build step or third-party runtime dependency is required. No analytics, forms that send data, account access or backend. Calculators run in the visitor's browser and do not save inputs.
 
-## Calculator
+## Two different models
 
-The calculator runs entirely in the visitor's browser. Inputs are examples, not BULT business data. The $89 recurring every-30-days price is used as a simplified monthly proxy; the $69 introductory shipment is excluded. Constant-churn LTV and a 3:1 ratio are illustrative, not forecasts or a safe-spend guarantee.
+The first-renewal scenario uses the observed $69 first order and $89 renewal, editable per-order costs, an assumed paid-renewal share by an explicit cutoff, a chosen reserve and non-media acquisition costs. Its result is a conditional planning budget, not BULT's actual CAC or a promised ad cost.
+
+The separate long-term stress test preserves the constant-churn recurrence. It uses the $89 renewal as a monthly proxy, excludes the introductory shipment and costs outside gross margin, and uses an illustrative 3:1 comparison. It is not a forecast or safe-spend limit. The $130 default is an assumption, not BULT data.
 
 ## Evidence
 
-The 16 proof images are dated snapshots. Open any image link to inspect the full-resolution PNG. Ad-library counts are keyword-search result snapshots, not complete advertiser inventories. Company review profiles are not product ratings or representative customer surveys.
+All 16 original proof PNGs are retained byte-for-byte. Two additional PageSpeed screenshots document the storefront's mobile lab results. Lab tests and site-wide real-user data are labeled separately. Review/advertising samples are not complete or representative inventories.
 
-## Accessibility
+## Experience and accessibility
 
-Includes semantic sections and input labels, keyboard focus styles, a skip link, descriptive image alternatives, reduced-motion support, and responsive mobile layouts. The calculator clears results for invalid inputs rather than retaining stale values.
+Real Vessel and BULT brand assets, CSS-only 3D depth, no video/WebGL payload, lazy evidence images, keyboard-friendly proof dialog, native disclosures, focus return and reduced-motion support. Small screens do not use hover tilt. Invalid calculator inputs clear old results.
+
+Asset provenance is in assets/ASSET-SOURCES.txt. Source/build/test files are kept outside the public directory.

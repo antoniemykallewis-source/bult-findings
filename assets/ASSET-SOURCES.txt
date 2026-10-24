@@ -1,0 +1,15 @@
+Brand assets used in the BULT visual revision. Retrieved 24 October 2026.
+
+VA_Primary_White.svg
+Current Vessel Archive homepage white wordmark, official site.
+https://framerusercontent.com/images/SpqUszYT6wZRmhNgmFlmfOSQQ.svg
+
+vessel-chrome-symbol.webp
+Current Vessel Archive homepage chrome VA symbol, official site.
+https://framerusercontent.com/images/r0QgDTXrcVwNvFAlW1mbamZ6yPc.webp
+
+bult-logo.png
+BULT official header wordmark.
+https://bult.com/cdn/shop/files/BULT_LOGO_Dark.png?v=1762896187&width=600
+
+Proof PNGs are the supplied original 24 October 2026 screenshots, retained byte-for-byte. Fonts and licenses are retained from the approved Vessel asset set.
