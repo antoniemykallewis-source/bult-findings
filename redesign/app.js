@@ -7,7 +7,7 @@
   let lastFocus = null, selectedPlan = 'subscription', hasItem = false;
   const announce = message => { $('#live-status').textContent = message; };
   const plans = {
-    subscription: { name: 'Subscription · every 30 days', price: '$69', cta: 'Start my first 30 days', shipping: 'Free', terms: 'Recurring subscription: $69 today, then $89 every 30 days until cancelled. Tax, if applicable, calculated at checkout. Ships to the 48 contiguous United States.', renewal: 'Then $89 every 30 days until cancelled. Skip, pause or cancel through your BULT account.', perks: ['$20 off your first subscription order','Free shipping on subscription orders','Skip, pause or cancel in your account','Reminder before each renewal'] },
+    subscription: { name: 'Subscription · every 30 days', price: '$69', cta: 'Start my first 30 days', shipping: 'Free', terms: 'Recurring subscription: $69 today, then $89 every 30 days until cancelled. Tax, if applicable, calculated at checkout. Ships to the 48 contiguous United States.', renewal: 'Then $89 every 30 days until cancelled. Skip, pause or cancel through your BULT account.', perks: [] },
     onetime: { name: 'One-time purchase', price: '$112', cta: 'Try the protocol once', shipping: 'Calculated at checkout', terms: 'One-time purchase: $112 for 30 daily packs. No recurring charge. Shipping and tax, if applicable, calculated at checkout. Ships to the 48 contiguous United States.', renewal: 'One purchase. No subscription and no recurring charge.', perks: ['30 daily packs of CORE + VITALITY + OMEGA','One order. No recurring commitment.','Standard shipping rates apply','Review every ingredient before you choose'] }
   };
   const menuButton = $('.menu-toggle');
@@ -124,7 +124,7 @@
   $('#capture-phone').addEventListener('input', event => event.target.setCustomValidity(''));
   $('#sms-consent').addEventListener('change', event => event.target.setCustomValidity(''));
   $('#skip-sms').addEventListener('click', finishCapture);
-  // No timed popups, exit-intent capture, autoplay, parallax, or scroll interception.
+  // No timed popups, exit-intent capture or scroll interception. Pack motion is opt-out and reduced-motion aware.
   // Sticky purchase is keyed to the actual action and its selected plan, never a distant image.
   let stickyTick = false;
   function updateSticky() {
@@ -138,22 +138,20 @@
   }, {passive:true});
   window.addEventListener('resize', updateSticky);
   updateSticky();
-  const gallery = {
-    ritual: {src:'assets/ritual.webp', alt:'A BULT daily pack beside a glass of water', caption:'01 / THE EVERYDAY'},
-    pack: {src:'assets/bult-sachet.webp', alt:'The front and reverse of a BULT daily supplement pouch', caption:'02 / ONE DAILY PACK'},
-    box: {src:'assets/bult-product-box-1.webp', alt:'BULT Men’s Daily Protocol box with 30 daily packs', caption:'03 / THIRTY DAILY PACKS'}
-  };
-  $$('[data-image]').forEach(button => button.addEventListener('click', () => {
-    const item = gallery[button.dataset.image];
-    $('#gallery-image').src = item.src; $('#gallery-image').alt = item.alt;
-    $('#product-gallery').dataset.view = button.dataset.image;
-    $('#image-reference').textContent = item.caption;
-    $$('[data-image]').forEach(control => {const active = control === button; control.classList.toggle('active',active); control.setAttribute('aria-pressed',String(active));});
-  }));
   // Match the tab orientation announced to assistive technology to the actual responsive layout.
   const horizontalTabs = matchMedia('(max-width: 700px)');
   const syncTabOrientation = () => $('.ingredient-tabs').setAttribute('aria-orientation', horizontalTabs.matches ? 'horizontal' : 'vertical');
   horizontalTabs.addEventListener('change',syncTabOrientation); syncTabOrientation();
+  const interactiveMedia = matchMedia('(hover: hover) and (pointer: fine)');
+  const hoverSurfaces = $$('.plan-option, .ingredient-tabs button');
+  hoverSurfaces.forEach(surface => {
+    surface.addEventListener('pointermove', event => {
+      if (!interactiveMedia.matches || reducedMotion.matches) return;
+      const r = surface.getBoundingClientRect();
+      surface.style.setProperty('--pointer-x', ((event.clientX-r.left)/r.width*100)+'%');
+      surface.style.setProperty('--pointer-y', ((event.clientY-r.top)/r.height*100)+'%');
+    });
+  });
   $('#year').textContent = new Date().getFullYear();
 })();
 
