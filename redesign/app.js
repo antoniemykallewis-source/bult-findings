@@ -140,7 +140,7 @@
   updateSticky();
   // Match the tab orientation announced to assistive technology to the actual responsive layout.
   const horizontalTabs = matchMedia('(max-width: 900px)');
-  const syncTabOrientation = () => $('.ingredient-tabs').setAttribute('aria-orientation', horizontalTabs.matches ? 'horizontal' : 'vertical');
+  const syncTabOrientation = () => $('.ingredient-tabs').setAttribute('aria-orientation', 'horizontal');
   horizontalTabs.addEventListener('change',syncTabOrientation); syncTabOrientation();
   const interactiveMedia = matchMedia('(hover: hover) and (pointer: fine)');
   const hoverSurfaces = $$('.plan-option, .ingredient-tabs button');
