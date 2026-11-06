@@ -4,7 +4,7 @@
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  let lastFocus = null, selectedPlan = 'subscription', hasItem = false, captureDismissed = false;
+  let lastFocus = null, selectedPlan = 'subscription', hasItem = false;
   const announce = message => { $('#live-status').textContent = message; };
   const plans = {
     subscription: { name: 'Subscription · every 30 days', price: '$69', cta: 'Start my first 30 days', shipping: 'Free', terms: 'Recurring subscription: $69 today, then $89 every 30 days until cancelled. Tax, if applicable, calculated at checkout. Ships to the 48 contiguous United States.', renewal: 'Then $89 every 30 days until cancelled. Skip, pause or cancel through your BULT account.', perks: ['$20 off your first subscription order','Free shipping on subscription orders','Skip, pause or cancel in your account','Reminder before each renewal'] },
@@ -19,7 +19,7 @@
   });
   $$('#mobile-menu a').forEach(link => link.addEventListener('click', closeMenu));
   function closeMenu() { $('#mobile-menu').hidden = true; menuButton.setAttribute('aria-expanded', 'false'); menuButton.setAttribute('aria-label', 'Open menu'); }
-  document.addEventListener('keydown', event => { if (event.key === 'Escape') closeMenu(); });
+  document.addEventListener('keydown', event => { if (event.key === 'Escape' && menuButton.getAttribute('aria-expanded') === 'true') { closeMenu(); menuButton.focus(); } });
   function openDialog(id) {
     closeMenu();
     const dialog = document.getElementById(id);
@@ -28,11 +28,6 @@
     lastFocus = document.activeElement;
     dialog.showModal();
     document.body.classList.add('modal-open');
-    if (id === 'capture') { captureDismissed = true; $('#offer-tab').hidden = true; }
-    if (id === 'founder-story') {
-      const video = $('#founder-video');
-      if (!video.src) video.src = 'assets/brand-film.mp4';
-    }
   }
   $$('[data-open]').forEach(button => button.addEventListener('click', () => openDialog(button.dataset.open)));
   $$('[data-close]').forEach(button => button.addEventListener('click', () => button.closest('dialog')?.close()));
@@ -40,7 +35,6 @@
     dialog.addEventListener('click', event => { if (event.target === dialog) { const r = dialog.getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) dialog.close(); } });
     dialog.addEventListener('close', () => {
       if (!document.querySelector('dialog[open]')) document.body.classList.remove('modal-open');
-      if (dialog.id === 'founder-story') $('#founder-video').pause();
       if (dialog.id === 'capture') { $('#email-form').reset(); $('#sms-form').reset(); $('#capture-step-one').hidden = false; $('#capture-step-two').hidden = true; $('#capture-done').hidden = true; }
       if (lastFocus?.isConnected) lastFocus.focus({preventScroll:true});
     });
@@ -59,8 +53,8 @@
     tab.addEventListener('click', () => selectFormula(tab.dataset.formula));
     tab.addEventListener('keydown', event => {
       let next;
-      if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
-      if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = (index + 1) % tabs.length;
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = (index - 1 + tabs.length) % tabs.length;
       if (event.key === 'Home') next = 0;
       if (event.key === 'End') next = tabs.length - 1;
       if (next !== undefined) { event.preventDefault(); selectFormula(tabs[next].dataset.formula, true); }
@@ -84,10 +78,10 @@
     const plan = plans[selectedPlan];
     $$('.plan-option').forEach(option => option.classList.toggle('selected', $('input',option).value === selectedPlan));
     $('#purchase-terms').textContent = plan.terms;
-    $('#add-to-bag').replaceChildren(document.createTextNode(plan.cta + ' '));
+    $('#add-to-bag').replaceChildren(document.createTextNode('Add to bag '));
     const price = document.createElement('span'); price.textContent = plan.price + ' '; const icon = document.createElement('i'); icon.className = 'arrow-icon'; icon.setAttribute('aria-hidden','true'); price.append(icon); $('#add-to-bag').append(price);
-    $('#plan-perks').replaceChildren();
-    plan.perks.forEach(perk => { const item = document.createElement('li'), check = document.createElement('span'); check.textContent = '✓'; item.append(check, document.createTextNode(' ' + perk)); $('#plan-perks').append(item); });
+    $('#sticky-price').textContent = selectedPlan === 'subscription' ? '$69 first order' : '$112 one time';
+    $('#sticky-terms').textContent = selectedPlan === 'subscription' ? 'Then $89 every 30 days' : 'No recurring charge';
   }
   $$('input[name=plan]').forEach(radio => radio.addEventListener('change', () => { selectedPlan = radio.value; syncPlan(); announce('Selected ' + plans[selectedPlan].name + ', ' + plans[selectedPlan].price + '.'); }));
   let bagPlan = selectedPlan;
@@ -101,7 +95,7 @@
   }
   $('#add-to-bag').addEventListener('click', () => { bagPlan = selectedPlan; hasItem = true; syncBag(); openDialog('bag'); announce('Men’s Daily Protocol added to preview bag. No order placed.'); });
   $$('[data-cart]').forEach(button => button.addEventListener('click', () => { syncBag(); openDialog('bag'); }));
-  $('#change-plan').addEventListener('click', () => { $('#bag').close(); $('#choose-plan').scrollIntoView({behavior:reducedMotion.matches?'instant':'smooth'}); $('input[name=plan]:checked').focus({preventScroll:true}); });
+  $('#change-plan').addEventListener('click', () => { lastFocus = $('input[name=plan]:checked'); $('#bag').close(); $('#choose-plan').scrollIntoView({behavior:reducedMotion.matches?'instant':'smooth'}); $('input[name=plan]:checked').focus({preventScroll:true}); });
   $('#remove-item').addEventListener('click', () => { hasItem = false; syncBag(); announce('Removed from preview bag.'); });
   $('#preview-checkout').addEventListener('click', () => { $('#filled-bag').hidden = true; $('#bag-handoff').hidden = false; announce('Checkout handoff preview. No order or payment was placed.'); });
   syncPlan(); syncBag();
@@ -130,44 +124,36 @@
   $('#capture-phone').addEventListener('input', event => event.target.setCustomValidity(''));
   $('#sms-consent').addEventListener('change', event => event.target.setCustomValidity(''));
   $('#skip-sms').addEventListener('click', finishCapture);
-  // A single, engagement-led invitation. Never on arrival or while viewing purchase/another overlay.
-  const loadedAt = Date.now(); let reachedEngagement = false, purchaseVisible = false;
-  const purchaseObserver = new IntersectionObserver(entries => { purchaseVisible = entries[0].isIntersecting; updateSticky(); },{threshold:0.1}); purchaseObserver.observe($('#start'));
-  const heroObserver = new IntersectionObserver(entries => { reachedEngagement = !entries[0].isIntersecting; updateSticky(); },{threshold:0}); heroObserver.observe($('.hero'));
-  function updateSticky() { $('#sticky-purchase').hidden = !reachedEngagement || purchaseVisible; }
-  let scrollScheduled = false;
-  window.addEventListener('scroll', () => {
-    if (scrollScheduled) return; scrollScheduled = true;
-    requestAnimationFrame(() => { scrollScheduled = false;
-      const progress = scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight);
-      if (!captureDismissed && Date.now() - loadedAt > 45000 && progress > .42 && progress < .65 && !purchaseVisible && !document.querySelector('dialog[open]')) openDialog('capture');
-    });
-  },{passive:true});
-  document.addEventListener('mouseout', event => {
-    if (event.clientY <= 0 && innerWidth > 1000 && Date.now() - loadedAt > 30000 && reachedEngagement && !captureDismissed && !purchaseVisible && !document.querySelector('dialog[open]')) openDialog('capture');
-  });
-  // CSS-built 3D concept, no WebGL dependency. Drag/keyboard and reduced-motion fallback.
-  const stage = $('#pack-stage'), pack = $('#pack'), spin = $('#spin-toggle');
-  let rotation = -24, paused = reducedMotion.matches, dragging = false, startX = 0, startY = 0, startRotation = 0;
-  function setPaused(value, preserve = false) {
-    paused = value;
-    if (paused && !preserve) { const computed = getComputedStyle(pack).transform; if (computed !== 'none') pack.style.transform = computed; }
-    pack.style.animation = paused ? 'none' : '';
-    if (!paused) pack.style.transform = '';
-    spin.setAttribute('aria-pressed', String(paused));
-    spin.setAttribute('aria-label', paused ? 'Start pack animation' : 'Pause pack animation');
-    $('.spin-label', spin).textContent = paused ? 'Play motion' : 'Pause motion';
-    $('.pause-icon', spin).textContent = paused ? '▷' : 'Ⅱ';
+  // No timed popups, exit-intent capture, autoplay, parallax, or scroll interception.
+  // Sticky purchase is keyed to the actual action and its selected plan, never a distant image.
+  let stickyTick = false;
+  function updateSticky() {
+    const action = $('#purchase-action').getBoundingClientRect();
+    $('#sticky-purchase').hidden = action.bottom >= 84;
   }
-  setPaused(paused);
-  spin.addEventListener('click', () => setPaused(!paused));
-  if (reducedMotion.matches) { spin.disabled = true; $('.spin-label', spin).textContent = 'Reduced motion'; spin.setAttribute('aria-label','Reduced motion enabled'); }
-  function rotateTo(value) { rotation = value; setPaused(true, true); pack.style.transform = `rotateX(7deg) rotateY(${rotation}deg) rotateZ(-10deg)`; }
-  stage.addEventListener('pointerdown', event => { dragging = true; startX = event.clientX; startY = event.clientY; startRotation = rotation; if (event.pointerType === 'mouse') stage.setPointerCapture(event.pointerId); });
-  stage.addEventListener('pointermove', event => { if (!dragging) return; const dx = event.clientX - startX, dy = event.clientY - startY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 5) rotateTo(startRotation + dx * .6); });
-  ['pointerup','pointercancel','lostpointercapture','pointerleave'].forEach(type => stage.addEventListener(type, () => dragging = false));
-  stage.addEventListener('keydown', event => { if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); rotateTo(rotation + (event.key === 'ArrowRight' ? 25 : -25)); } });
-  const packObserver = new IntersectionObserver(entries => { if (!paused) pack.style.animationPlayState = entries[0].isIntersecting && !document.hidden ? 'running' : 'paused'; },{threshold:.1}); packObserver.observe(stage);
-  document.addEventListener('visibilitychange', () => { if (!paused) pack.style.animationPlayState = document.hidden ? 'paused' : 'running'; });
+  window.addEventListener('scroll', () => {
+    if (stickyTick) return;
+    stickyTick = true;
+    requestAnimationFrame(() => { updateSticky(); stickyTick = false; });
+  }, {passive:true});
+  window.addEventListener('resize', updateSticky);
+  updateSticky();
+  const gallery = {
+    ritual: {src:'assets/ritual.webp', alt:'A BULT daily pack beside a glass of water', caption:'01 / THE EVERYDAY'},
+    pack: {src:'assets/bult-sachet.webp', alt:'The front and reverse of a BULT daily supplement pouch', caption:'02 / ONE DAILY PACK'},
+    box: {src:'assets/bult-product-box-1.webp', alt:'BULT Men’s Daily Protocol box with 30 daily packs', caption:'03 / THIRTY DAILY PACKS'}
+  };
+  $$('[data-image]').forEach(button => button.addEventListener('click', () => {
+    const item = gallery[button.dataset.image];
+    $('#gallery-image').src = item.src; $('#gallery-image').alt = item.alt;
+    $('#product-gallery').dataset.view = button.dataset.image;
+    $('#image-reference').textContent = item.caption;
+    $$('[data-image]').forEach(control => {const active = control === button; control.classList.toggle('active',active); control.setAttribute('aria-pressed',String(active));});
+  }));
+  // Match the tab orientation announced to assistive technology to the actual responsive layout.
+  const horizontalTabs = matchMedia('(max-width: 700px)');
+  const syncTabOrientation = () => $('.ingredient-tabs').setAttribute('aria-orientation', horizontalTabs.matches ? 'horizontal' : 'vertical');
+  horizontalTabs.addEventListener('change',syncTabOrientation); syncTabOrientation();
   $('#year').textContent = new Date().getFullYear();
 })();
+
