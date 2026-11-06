@@ -139,7 +139,7 @@
   window.addEventListener('resize', updateSticky);
   updateSticky();
   // Match the tab orientation announced to assistive technology to the actual responsive layout.
-  const horizontalTabs = matchMedia('(max-width: 700px)');
+  const horizontalTabs = matchMedia('(max-width: 900px)');
   const syncTabOrientation = () => $('.ingredient-tabs').setAttribute('aria-orientation', horizontalTabs.matches ? 'horizontal' : 'vertical');
   horizontalTabs.addEventListener('change',syncTabOrientation); syncTabOrientation();
   const interactiveMedia = matchMedia('(hover: hover) and (pointer: fine)');
