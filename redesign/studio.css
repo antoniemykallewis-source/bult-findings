@@ -21,7 +21,10 @@ body { letter-spacing: normal; }
 }
 .hero-title h1 { font-weight: 800; line-height: 1.02; }
 .hero-title h1 span { color: var(--gray-2); }
-.purchase-panel, .subscription { background: var(--charcoal); }
+.purchase-panel, .subscription, .routine { background: var(--charcoal); }
+.system-intro { background: #232323; }
+.ingredients { background: #151515; }
+.protocol-strip { background: #202020; }
 .purchase-panel::before { background: #4c4d4f; }
 .plan-option.selected {
   border-color: #ac8c64;

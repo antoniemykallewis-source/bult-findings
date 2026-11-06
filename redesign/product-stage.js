@@ -78,14 +78,15 @@
     scene.dataset.view = next;
     views.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.studioView === next)));
     labelSpin();
-    if (view !== 'box') animateTo(nearestAngle(view === 'pack' ? -14 : 180), 560);
+    if (view === 'box') draw();
+    else animateTo(nearestAngle(view === 'pack' ? -14 : 180), 560);
     if (announce) status.textContent = descriptions[next];
   }
 
   views.forEach(button => button.addEventListener('click', () => select(button.dataset.studioView)));
   spin.addEventListener('click', () => {
     if (turning) {
-      stop();
+      turnBy(0);
       status.textContent = 'Rotation paused.';
     } else if (motion.matches) {
       select(view === 'inside' ? 'pack' : 'inside');
@@ -146,9 +147,17 @@
   ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(event => scene.addEventListener(event, endDrag));
   scene.addEventListener('pointerleave', () => { if (drag && !drag.active) drag = null; });
   motion.addEventListener('change', () => select(view, false));
-  document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
+  function restWhenHidden() {
+    if (!animation && !drag) return;
+    drag = null;
+    delete scene.dataset.dragging;
+    stop();
+    angle = nearestAngle(view === 'inside' ? 180 : -14);
+    draw();
+  }
+  document.addEventListener('visibilitychange', () => { if (document.hidden) restWhenHidden(); });
   if ('IntersectionObserver' in window) {
-    new IntersectionObserver(([entry]) => { if (!entry.isIntersecting && turning) stop(); }).observe(scene);
+    new IntersectionObserver(([entry]) => { if (!entry.isIntersecting) restWhenHidden(); }).observe(scene);
   }
   draw();
   labelSpin();
