@@ -1,0 +1,98 @@
+/* Explain the product before asking for a purchase plan. */
+.hero { min-height: 820px; }
+.hero-art { min-height: 820px; }
+.hero-title .eyebrow { font-size: 11px; letter-spacing: .10em; }
+.hero-product-caption { font-size: 15px; line-height: 1.6; color: #d5d8dc; margin-top: 22px; max-width: 34ch; }
+.pack-studio { inset-block-start: 305px; }
+.hero-explainer { align-self: center; padding: 44px clamp(28px,4vw,65px); background: #1a1a1a; }
+.hero-explainer > .eyebrow { color: #b9c9d3; font-size: 10px; letter-spacing: .13em; margin-bottom: 23px; }
+.hero-explainer h2 { font-size: clamp(34px,3.45vw,56px); line-height: 1.08; letter-spacing: -.05em; margin-bottom: 24px; text-transform: uppercase; }
+.hero-explainer h2 span { color: var(--accent); }
+.intro-description { font-size: 16px; line-height: 1.7; color: #c6c8cc; max-width: 42ch; }
+.intro-benefits { list-style: none; padding: 0; margin: 26px 0 20px; }
+.intro-benefits li { padding: 16px 0; border-top: 1px solid #46494d; display: grid; grid-template-columns: 30px 1fr; column-gap: 13px; }
+.intro-benefits li:last-child { border-bottom: 1px solid #46494d; }
+.intro-benefits .benefit-index { color: #a4b8c4; font-size: 10px; letter-spacing: .04em; padding-top: 5px; }
+.intro-benefits h3 { font-size: 17px; font-weight: 600; line-height: 1.35; margin-bottom: 5px; }
+.intro-benefits p { font-size: 12px; line-height: 1.6; color: #bfc4c8; }
+.intro-format { display: flex; flex-wrap: wrap; gap: 7px 15px; color: #ccd2d6; font-size: 10px; letter-spacing: .035em; margin: 21px 0; }
+.intro-format span + span { padding-left: 15px; border-left: 1px solid #747c82; }
+.intro-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 22px; }
+.intro-actions .button { min-height: 54px; padding: 15px 21px; gap: 22px; font-size: 12px; }
+.intro-actions .text-link { min-height: 44px; font-size: 11px; }
+.intro-disclaimer { font-size: 10px; line-height: 1.65; color: #aeb5bb; margin-top: 15px; }
+.intro-disclaimer a { display: inline-block; text-decoration: underline; text-underline-offset: 3px; }
+.plan-section { display: grid; grid-template-columns: .85fr 1fr; gap: 8%; padding: 75px var(--pad); border-top: 1px solid #59616a; border-bottom: 1px solid #32383d; background: radial-gradient(ellipse at 15% 40%,#46566430,transparent 60%),#1a1a1a; max-width: 1800px; margin: auto; }
+.plan-section .product-heading { display: block; align-self: start; padding-top: 9px; margin: 0; }
+.plan-section .product-heading h2 { font-size: clamp(42px,4.7vw,73px); line-height: 1.04; margin: 25px 0; }
+.plan-section .product-heading h2 br { display: block; }
+.plan-section .purchase-desc { display: block; max-width: 37ch; font-size: 16px; line-height: 1.75; margin: 0; }
+.plan-section .product-heading .eyebrow { font-size: 10px; }
+.plan-section .product-heading .text-link { margin-top: 27px; }
+.purchase-options { min-width: 0; }
+@media(min-width:1500px) { .pack-studio { inset-block-start: 340px; } }
+@media(min-width:901px) and (max-width:1100px) {
+  .hero-title h1 { font-size: 65px; }
+  .hero-title .eyebrow { font-size: 9px; }
+  .hero-product-caption { font-size: 14px; }
+  .hero-explainer { padding: 36px 26px; }
+  .hero-explainer h2 { font-size: 35px; }
+  .intro-description { font-size: 14px; }
+  .intro-benefits h3 { font-size: 16px; }
+  .intro-benefits p { font-size: 11px; }
+  .pack-studio { inset-block-start: 265px; }
+}
+@media(max-width:900px) {
+  .hero { min-height: 0; }
+  .hero-art { height: clamp(450px,67vw,570px); min-height: 0; }
+  .hero-title .eyebrow { font-size: 10px; line-height: 1.5; margin-bottom: 14px; }
+  .hero-product-caption { font-size: 13px; max-width: 31ch; line-height: 1.55; margin-top: 12px; }
+  .pack-studio { inset-block-start: 175px; }
+  .hero-explainer { padding: 40px 28px 45px; }
+  .hero-explainer h2 { font-size: clamp(34px,6vw,49px); max-width: 19ch; }
+  .intro-description { max-width: 55ch; }
+  .intro-benefits { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .intro-benefits li { display: block; border-bottom: 1px solid #46494d; }
+  .benefit-index { display: block; margin-bottom: 12px; }
+  .intro-benefits h3 { font-size: 16px; }
+  .intro-benefits p { font-size: 12px; }
+  .plan-section { display: block; padding: 55px 28px; }
+  .plan-section .product-heading { margin-bottom: 30px; }
+  .plan-section .product-heading h2 { font-size: 48px; }
+  .plan-section .purchase-desc { font-size: 15px; max-width: 50ch; }
+  .plan-section .product-heading .text-link { margin-top: 20px; }
+}
+@media(min-width:600px) and (max-width:900px) { .pack-studio { inset-block-start: 235px; } }
+@media(max-width:600px) {
+  .hero-title .eyebrow { font-size: 9px; letter-spacing: .06em; }
+  .hero-title h1 { font-size: clamp(35px,8.3vw,49px); }
+  .hero-explainer { padding: 35px 22px 40px; }
+  .hero-explainer > .eyebrow { font-size: 9px; margin-bottom: 19px; }
+  .hero-explainer h2 { font-size: clamp(30px,7.6vw,43px); line-height: 1.13; margin-bottom: 20px; }
+  .intro-description { font-size: 15px; line-height: 1.7; }
+  .intro-benefits { display: block; margin: 23px 0 20px; }
+  .intro-benefits li { display: grid; padding: 16px 0; grid-template-columns: 24px 1fr; column-gap: 12px; border-bottom: 0; }
+  .intro-benefits li:last-child { border-bottom: 1px solid #46494d; }
+  .benefit-index { margin: 0; }
+  .intro-benefits h3 { font-size: 17px; }
+  .intro-benefits p { font-size: 12px; }
+  .intro-format { font-size: 10px; gap: 8px 12px; }
+  .intro-format span + span { padding-left: 12px; }
+  .intro-actions { align-items: stretch; gap: 10px 20px; }
+  .intro-actions .button { font-size: 12px; justify-content: space-between; width: 100%; }
+  .intro-disclaimer { font-size: 10px; margin-top: 12px; }
+  .plan-section { padding: 48px 22px; }
+  .plan-section .product-heading h2 { font-size: 40px; margin: 22px 0; }
+  .plan-section .product-heading .eyebrow { font-size: 9px; }
+  .plan-section .purchase-desc { font-size: 14px; }
+}
+@media(max-width:360px) {
+  .hero-title .eyebrow { font-size: 8px; }
+  .hero-product-caption { font-size: 12px; }
+  .hero-art { height: 440px; }
+  .hero-explainer { padding: 32px 20px 38px; }
+  .hero-explainer h2 { font-size: 28px; }
+  .intro-format { font-size: 9px; }
+  .plan-section { padding: 44px 20px; }
+  .plan-section .product-heading h2 { font-size: 35px; }
+}
