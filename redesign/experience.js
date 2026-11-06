@@ -9,7 +9,43 @@
   const tabs = [...document.querySelectorAll('.ingredient-tabs [role=tab]')];
   const grid = document.querySelector('.month-grid');
   const days = [...grid.children];
-  const steps = [...document.querySelectorAll('.routine-steps li')];
+  const gallery = document.getElementById('routine-gallery');
+  const steps = [...document.querySelectorAll('[data-routine-photo]')];
+  const arrows = [...document.querySelectorAll('[data-gallery-step]')];
+  const position = document.getElementById('gallery-position');
+  const desktop = matchMedia('(min-width: 901px)');
+  let slide = 0, manual = false;
+
+  function markSlide(index) {
+    slide = index;
+    steps.forEach((button, i) => {
+      button.setAttribute('aria-pressed', String(i === index));
+      button.closest('li').classList.toggle('active-step', i === index);
+    });
+    arrows[0].disabled = index === 0;
+    arrows[1].disabled = index === steps.length - 1;
+    position.textContent = String(index + 1).padStart(2, '0') + ' / 03';
+  }
+  function showSlide(index, byUser) {
+    if (index < 0 || index >= steps.length) return;
+    if (byUser) manual = true;
+    gallery.scrollTo({left: index * gallery.clientWidth, behavior: byUser && !reduced.matches ? 'smooth' : 'instant'});
+  }
+  steps.forEach((button, i) => button.addEventListener('click', () => showSlide(i, true)));
+  arrows.forEach(button => button.addEventListener('click', () => showSlide(slide + Number(button.dataset.galleryStep), true)));
+  gallery.addEventListener('pointerdown', () => { manual = true; });
+  gallery.addEventListener('wheel', event => { if (event.deltaX || event.shiftKey) manual = true; }, {passive: true});
+  gallery.addEventListener('keydown', event => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const target = {ArrowLeft: slide - 1, ArrowRight: slide + 1, Home: 0, End: steps.length - 1};
+    showSlide(target[event.key], true);
+  });
+  gallery.addEventListener('scroll', () => {
+    const next = Math.round(gallery.scrollLeft / gallery.clientWidth);
+    if (next >= 0 && next < steps.length && next !== slide) markSlide(next);
+  }, {passive: true});
+  markSlide(0);
   const formula = { core: ['02','CORE CAPSULES'], vitality: ['03','VITALITY CAPSULES'], omega: ['02','OMEGA SOFTGELS'] };
   let frame = 0, previous = '';
   const clamp = value => Math.max(0, Math.min(1, value));
@@ -36,9 +72,16 @@
     const calendar = grid.getBoundingClientRect();
     const lit = reduced.matches ? 30 : Math.ceil(clamp((height*.88-calendar.top)/(height*.48))*30);
     days.forEach((day,index) => day.classList.toggle('lit', index < lit));
-    let nearest = 0, distance = Infinity;
-    steps.forEach((step,index) => {const b=step.getBoundingClientRect();const d=Math.abs(b.top+b.height/2-height*.52);if(d<distance){distance=d;nearest=index;}});
-    steps.forEach((step,index) => step.classList.toggle('active-step',index===nearest));
+    const bounds = gallery.getBoundingClientRect();
+    if (bounds.bottom < 0 || bounds.top > height) manual = false;
+    if (!manual && desktop.matches && !reduced.matches && bounds.top < height && bounds.bottom > 0) {
+      const distances = steps.map(button => {
+        const rect = button.getBoundingClientRect();
+        return Math.abs(rect.top + rect.height / 2 - height * .57);
+      });
+      const nearest = distances.indexOf(Math.min(...distances));
+      if (nearest !== slide) showSlide(nearest, false);
+    }
   }
   function schedule() { if (!frame) frame=requestAnimationFrame(update); }
   window.addEventListener('scroll',schedule,{passive:true});
